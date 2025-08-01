@@ -78,7 +78,7 @@
       const password = document.getElementById("password").value;
 
       try {
-        const res = await fetch("https://blood-bank-wym2.onrender.com", {
+        const res = await fetch("https://blood-bank-wym2.onrender.com/api/admin/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
