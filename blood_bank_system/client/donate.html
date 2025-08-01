@@ -140,7 +140,7 @@
       const units = document.getElementById("units").value;
 
       try {
-        const res = await fetch("https://blood-bank-wym2.onrender.com", {
+        const res = await fetch("https://blood-bank-wym2.onrender.com/api/donate", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
