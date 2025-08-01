@@ -194,7 +194,7 @@
 
     async function updateStatus(id, status) {
       try {
-        const res = await fetch(`http://localhost:5050/api/admin/requests/${id}`, {
+        const res = await fetch(`https://blood-bank-wym2.onrender.com/api/admin/requests/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status })
