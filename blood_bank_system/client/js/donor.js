@@ -19,7 +19,7 @@ if (document.getElementById("profileForm")) {
     const contact = document.getElementById("contact").value;
 
     try {
-      const res = await fetch("http://localhost:5050/api/donor/profile", {
+      const res = await fetch("https://blood-bank-wym2.onrender.com/api/donor/profile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
