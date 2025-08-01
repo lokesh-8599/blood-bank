@@ -113,7 +113,7 @@
       msg.innerText = "Login required to view requests.";
       requestList.style.display = 'none';
     } else {
-      fetch(`http://localhost:5050/api/recipient/requests?email=${email}`, {
+      fetch(`https://blood-bank-wym2.onrender.com/api/recipient/requests?email=${email}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
