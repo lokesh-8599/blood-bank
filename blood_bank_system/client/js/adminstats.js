@@ -3,7 +3,7 @@ console.log("✅ adminstats.js loaded");
 window.onload = async function () {
 
   try {
-    const res = await fetch("http://localhost:5050/api/admin/stats");
+    const res = await fetch("https://blood-bank-wym2.onrender.com/api/admin/stats");
 
     if (!res.ok) throw new Error("Failed to fetch dashboard stats");
 
