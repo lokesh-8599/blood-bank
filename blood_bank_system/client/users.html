@@ -154,7 +154,7 @@
 
     async function fetchUsers() {
       try {
-        const res = await fetch("http://localhost:5050/api/admin/users");
+        const res = await fetch("https://blood-bank-wym2.onrender.com/api/admin/users");
         const users = await res.json();
         allUsers = users;
         renderTable(allUsers);
@@ -201,7 +201,7 @@
       if (!confirm(`Are you sure you want to delete user ${email}?`)) return;
 
       try {
-        const res = await fetch(`http://localhost:5050/api/admin/users/${email}`, {
+        const res = await fetch(`https://blood-bank-wym2.onrender.com/api/admin/users/${email}`, {
           method: "DELETE"
         });
 
