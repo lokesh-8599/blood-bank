@@ -1,5 +1,5 @@
 // ✅ Set correct base URL
-const API = 'http://localhost:5050/api';
+const API = 'https://blood-bank-wym2.onrender.com/api';
 
 // 🔐 REGISTER
 if (document.getElementById('registerForm')) {
