@@ -1,0 +1,194 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 40px auto;
+  max-width: 420px;
+  background: linear-gradient(120deg, #ffe6e6 60%, #fff 100%);
+  border-radius: 18px;
+  padding: 36px;
+  box-shadow: 0 8px 32px rgba(183, 28, 28, 0.12);
+}
+
+h1, h2 {
+  color: #b71c1c;
+  background: linear-gradient(90deg, #e53935, #ff7043);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
+
+form {
+  background: linear-gradient(120deg, #fff5f5 70%, #ffd6d6 100%);
+  padding: 26px 22px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(229, 57, 53, 0.08);
+  margin-bottom: 26px;
+}
+
+input, select, button {
+  padding: 10px;
+  margin-bottom: 14px;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ffcccb;
+  font-size: 1em;
+  transition: border 0.25s, box-shadow 0.25s;
+}
+
+input:focus, select:focus {
+  border: 1.5px solid #ef5350;
+  outline: none;
+  box-shadow: 0 0 6px #ff8a80;
+}
+
+select {
+  background-color: #fff8e1;
+}
+
+button {
+  background: linear-gradient(90deg, #e57373 60%, #ffd54f 100%);
+  color: #b71c1c;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px #ffbcbc60;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #ffd54f 10%, #e53935 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px #e5737360;
+  transform: translateY(-2px) scale(1.03);
+}
+
+a {
+  color: #e53935;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #ff1744;
+  text-decoration: underline;
+}
+
+#welcome {
+  margin-bottom: 22px;
+  color: #ad1457;
+  background: linear-gradient(90deg, #ad1457, #ff4081);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.3em;
+}
+
+#dashboard a {
+  display: block;
+  background: linear-gradient(90deg, #fff3e0 80%, #ffe0b2 100%);
+  margin: 6px 0 12px 0;
+  padding: 9px 16px;
+  border-radius: 7px;
+  border-left: 4px solid #e57373;
+  color: #b71c1c;
+  transition: background 0.18s, color 0.18s, border 0.3s;
+}
+
+#dashboard a:hover {
+  background: linear-gradient(90deg, #ffcdd2 0%, #ffd54f 100%);
+  color: #fff;
+  border-left: 6px solid #ff4081;
+}
+
+#loginMessage, #registerMessage {
+  min-height: 20px;
+  color: #d50000;
+  font-size: 1em;
+  margin: 8px 0 0 0;
+  text-align: center;
+  font-weight: bold;
+}
+body {
+  background: linear-gradient(to right, #ffe6e6, #fff);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #d32f2f;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #d32f2f;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #b71c1c;
+}
+
+#profileMessage, #donationMessage {
+  text-align: center;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background-color: #f44336;
+  color: white;
+}
+.logout-link {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 12px 24px;
+  background-color: #b71c1c;
+  color: white;
+  border-radius: 6px;
+  font-size: 1em;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.logout-link:hover {
+  background-color: #d32f2f;
+}
+
+ 

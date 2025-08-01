@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Requests</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ffe0e0, #ffffff);
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #b71c1c;
+      margin-bottom: 20px;
+    }
+
+    #requestList {
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .request-card {
+      background: #ffffff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s;
+    }
+
+    .request-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .request-card span {
+      display: block;
+      margin: 8px 0;
+      font-size: 1.05em;
+    }
+
+    .request-card span strong {
+      color: #b71c1c;
+    }
+
+    .status {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .status.Pending {
+      background-color: #fff3e0;
+      color: #f57c00;
+      border: 1px solid #f57c00;
+    }
+
+    .status.Approved {
+      background-color: #e8f5e9;
+      color: #388e3c;
+      border: 1px solid #388e3c;
+    }
+
+    .status.Denied {
+      background-color: #ffebee;
+      color: #d32f2f;
+      border: 1px solid #d32f2f;
+    }
+
+    #msg {
+      color: red;
+      margin-top: 15px;
+    }
+
+    .back-button {
+      margin-top: 30px;
+      background-color: #d32f2f;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .back-button:hover {
+      background-color: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+
+  <h2> Your Blood Request History</h2>
+  <div id="requestList">Loading...</div>
+  <div id="msg"></div>
+
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+    const email = user?.email;
+
+    const requestList = document.getElementById('requestList');
+    const msg = document.getElementById('msg');
+
+    if (!token || !email) {
+      msg.innerText = "Login required to view requests.";
+      requestList.style.display = 'none';
+    } else {
+      fetch(`http://localhost:5050/api/recipient/requests?email=${email}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data)) {
+          msg.innerText = data.message || 'Something went wrong.';
+          requestList.innerHTML = '';
+          return;
+        }
+
+        if (data.length === 0) {
+          requestList.innerHTML = '<p>No blood requests found.</p>';
+        } else {
+          requestList.innerHTML = data.map(req => `
+            <div class="request-card">
+              <span>🏥 <strong>Location:</strong> ${req.location}</span>
+              <span>🩸 <strong>Blood Group:</strong> ${req.bloodGroup}</span>
+              <span>📝 <strong>Reason:</strong> ${req.reason}</span>
+              <span>📅 <strong>Date:</strong> ${new Date(req.date).toLocaleDateString()}</span>
+              <span class="status ${req.status}">${req.status}</span>
+            </div>
+          `).join('');
+        }
+      })
+      .catch(() => {
+        msg.innerText = "Failed to fetch request history.";
+        requestList.innerHTML = '';
+      });
+    }
+  </script>
+</body>
+</html>

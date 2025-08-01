@@ -1,0 +1,95 @@
+<!-- frontend/admin/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard | Blood Bank</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f2f6ff;
+    }
+
+    header {
+      background:#b71c1c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card h3 {
+      color: #b71c1c;
+    }
+
+    .card span {
+      font-size: 24px;
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      background: #e3f2fd;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #b71c1c;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, Admin - Manage Blood Bank Operations</p>
+  </header>
+
+  <nav>
+    <a href="users.html"> Users</a>
+    <a href="requests.html">Manage Requests</a>
+    <a href="inventory.html">Manage Inventory</a>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h3>Total Donors</h3>
+      <span id="donors">0</span>
+    </div>
+    <div class="card">
+      <h3>Total Recipients</h3>
+      <span id="recipients">0</span>
+    </div>
+    <div class="card">
+      <h3>Pending Requests</h3>
+      <span id="requests">0</span>
+    </div>
+    <script src="js/adminstats.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donor Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(to bottom right, #ffe0e0, #ffffff);
+      font-family: 'Segoe UI', sans-serif;
+    }
+         header {
+      background-color: #b71c1c;
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .header-title {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    #welcome {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #d32f2f, #f06292);
+      color: transparent;
+      background-clip: text;
+      -webkit-background-clip: text;
+      font-weight: bold;
+    }
+
+    #dashboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: end;
+      gap: 15px;
+    }
+
+    .dash-link {
+      display: block;
+      width: 260px;
+      padding: 14px 20px;
+      background: #b71c1c;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .dash-link:hover {
+      background: linear-gradient(90deg, #ff5252, #ff8a80);
+      transform: scale(1.05);
+    }
+
+    .logout-btn {
+      margin-top: 30px;
+      margin-left: 600px;
+      margin-right:600px;
+      background-color: #c62828;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .logout-btn:hover {
+      background-color: #b71c1c;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+    <header>
+    <div class="header-title">BLOOD BANK MANAGEMENT SYSTEM</div>
+    
+    </div>
+  </header>
+  <h2 id="welcome"></h2>
+  <div id="dashboard"></div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "login.html";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const welcomeEl = document.getElementById("welcome");
+      welcomeEl.textContent = `Welcome, ${user.name} (${user.role.toUpperCase()})`;
+
+      const dashboard = document.getElementById("dashboard");
+
+      if (user.role === "donor") {
+        dashboard.innerHTML = `
+          <a class="dash-link" href="eligibility.html">Check Eligibility</a>
+          <a class="dash-link" href="donate.html"> Schedule Donation</a>
+        `;
+      } else if (user.role === "recipient") {
+        dashboard.innerHTML = `
+          <a class="dash-link" href="request.html">Request Blood</a>
+          <a class="dash-link" href="track.html">Track Request</a>
+        `;
+      } else if (user.role === "admin") {
+        dashboard.innerHTML = `
+          <a class="dash-link" href="requests.html"> Approve Requests</a>
+          <a class="dash-link" href="inventory.html"> Inventory</a>
+        `;
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

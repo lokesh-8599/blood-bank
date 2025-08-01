@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> Donate Blood</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #ffe0e0, #ffffff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(233, 30, 99, 0.3);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h2 {
+      color: #b71c1c;
+      margin-bottom: 10px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input, select, button {
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #b71;
+      font-size: 16px;
+    }
+
+    select {
+      background: #f9f9f9;
+    }
+
+    button {
+      background: #b71c1c;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #ad1457, #ec407a);
+    }
+
+    #message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #999;
+    }
+
+    #customHospital {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Donate Blood</h2>
+    <form id="donateForm">
+      <select id="hospitalSelect" required>
+        <option value="" disabled selected>Select Hospital</option>
+        <option value="Apollo Hospitals">Apollo Hospitals</option>
+        <option value="Fortis Healthcare">Fortis Healthcare</option>
+        <option value="AIIMS Delhi">AIIMS Delhi</option>
+        <option value="Manipal Hospital">Manipal Hospital</option>
+        <option value="Global Hospitals">Global Hospitals</option>
+        <option value="CMC Vellore">CMC Vellore</option>
+        <option value="Other">Other</option>
+      </select>
+      <input type="text" id="customHospital" placeholder="Enter Hospital Name" />
+
+      <input type="text" id="location" placeholder="Location" required />
+
+      <select id="bloodGroup" required>
+        <option value="" disabled selected>Select Blood Group</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+      </select>
+
+      <input type="number" id="units" placeholder="1Unit=450ml" min="1" required />
+      <button type="submit">Donate</button>
+      <div id="message"></div>
+    </form>
+    <footer>© 2025 Blood Bank | Venkata Narayana Mogili</footer>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const hospitalSelect = document.getElementById("hospitalSelect");
+    const customHospitalInput = document.getElementById("customHospital");
+
+    hospitalSelect.addEventListener("change", () => {
+      if (hospitalSelect.value === "Other") {
+        customHospitalInput.style.display = "block";
+        customHospitalInput.required = true;
+      } else {
+        customHospitalInput.style.display = "none";
+        customHospitalInput.required = false;
+      }
+    });
+
+    document.getElementById("donateForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const hospital = hospitalSelect.value === "Other" ? customHospitalInput.value : hospitalSelect.value;
+      const location = document.getElementById("location").value;
+      const bloodGroup = document.getElementById("bloodGroup").value;
+      const units = document.getElementById("units").value;
+
+      try {
+        const res = await fetch("http://localhost:5050/api/donate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            hospital,
+            location,
+            bloodGroup,
+            units,
+            donorEmail: user.email
+          })
+        });
+
+        const result = await res.json();
+        document.getElementById("message").innerText = result.message || "Donation submitted!";
+        document.getElementById("message").style.color = "green";
+        e.target.reset();
+        customHospitalInput.style.display = "none";
+      } catch (err) {
+        document.getElementById("message").innerText = "Something went wrong.";
+        document.getElementById("message").style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>

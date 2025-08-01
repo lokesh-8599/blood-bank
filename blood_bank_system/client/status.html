@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Request Status</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    body {
+      background: #e3f2fd;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h2 {
+      color: #1565c0;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 90%;
+      max-width: 800px;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #1976d2;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f1f8ff;
+    }
+
+    #noData {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #e53935;
+    }
+
+    .hospital-icon {
+      font-size: 20px;
+      color: #0288d1;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2><span class="hospital-icon"></span>Track Your Blood Request Status</h2>
+
+  <table id="statusTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Blood Group</th>
+        <th>Location</th>
+        <th>Reason</th>
+        <th>Requested On</th>
+      </tr>
+    </thead>
+    <tbody id="statusBody">
+      <!-- Data will be injected here -->
+    </tbody>
+  </table>
+
+  <p id="noData" style="display: none;">No blood requests found.</p>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
+    if (!user || user.role !== 'recipient') {
+      window.location.href = "../login.html";
+    }
+
+    fetch(`http://localhost:5050/api/recipient/history/${user.email}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const body = document.getElementById("statusBody");
+      const noData = document.getElementById("noData");
+
+      if (!data || data.length === 0) {
+        noData.style.display = "block";
+        return;
+      }
+
+      data.forEach((req, index) => {
+        const row = `<tr>
+          <td>${index + 1}</td>
+          <td>${req.bloodGroup || '-'}</td>
+          <td>${req.location || '-'}</td>
+          <td>${req.reason || 'N/A'}</td>
+          <td>${req.date || '-'}</td>
+        </tr>`;
+        body.innerHTML += row;
+      });
+    })
+    .catch(err => {
+      console.error("Error fetching request history:", err);
+      document.getElementById("noData").textContent = "Failed to load data.";
+      document.getElementById("noData").style.display = "block";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Users | Admin</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f3f7fb;
+    }
+
+    header {
+      background: #b71c1c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    h2 {
+      color:#b71c1c;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-bar {
+      max-width: 400px;
+      margin: 0 auto 20px auto;
+      display: flex;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 10px 14px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color:#b71c1c;
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:hover {
+      background-color: #f1faff;
+    }
+
+    .role {
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+
+    .donor {
+      background-color: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .recipient {
+      background-color: #fce4ec;
+      color: #ad1457;
+    }
+
+    .delete-btn {
+      padding: 6px 12px;
+      background-color: #e53935;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: #c62828;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: white;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Manage Users</h1>
+  </header>
+
+  <div class="container">
+    <h2>All Registered Users</h2>
+
+    <!-- 🔍 Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by name or email..." onkeyup="filterUsers()" />
+    </div>
+
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamic rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <footer>© 2025 Blood Bank Management | Admin Panel</footer>
+
+  <script>
+    let allUsers = [];
+
+    async function fetchUsers() {
+      try {
+        const res = await fetch("http://localhost:5050/api/admin/users");
+        const users = await res.json();
+        allUsers = users;
+        renderTable(allUsers);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        document.querySelector("#usersTable tbody").innerHTML =
+          "<tr><td colspan='4'>Error loading user list</td></tr>";
+      }
+    }
+
+    function renderTable(users) {
+      const tbody = document.querySelector("#usersTable tbody");
+      tbody.innerHTML = "";
+
+      if (!users.length) {
+        tbody.innerHTML = "<tr><td colspan='4'>No users found</td></tr>";
+        return;
+      }
+
+      users.forEach(user => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${user.name || '-'}</td>
+          <td>${user.email}</td>
+          <td><span class="role ${user.role}">${user.role}</span></td>
+          <td>
+            <button class="delete-btn" onclick="deleteUser('${user.email}')">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function filterUsers() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allUsers.filter(user =>
+        user.name?.toLowerCase().includes(query) ||
+        user.email?.toLowerCase().includes(query)
+      );
+      renderTable(filtered);
+    }
+
+    async function deleteUser(email) {
+      if (!confirm(`Are you sure you want to delete user ${email}?`)) return;
+
+      try {
+        const res = await fetch(`http://localhost:5050/api/admin/users/${email}`, {
+          method: "DELETE"
+        });
+
+        if (res.ok) {
+          alert("User deleted successfully.");
+          fetchUsers(); // Refresh the list
+        } else {
+          const { message } = await res.json();
+          alert("Error deleting user: " + message);
+        }
+      } catch (err) {
+        console.error("Delete error:", err);
+        alert("Server error while deleting user.");
+      }
+    }
+
+    // Initial load
+    fetchUsers();
+  </script>
+</body>
+</html>

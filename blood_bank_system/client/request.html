@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Request Blood</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #ffe0e0, #ffffff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 12px 24px rgba(244, 67, 54, 0.2);
+      width: 90%;
+      max-width: 480px;
+      text-align: center;
+      border: 2px #b71c1c solid;
+    }
+
+    h2 {
+      color:#b71c1c;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    input, select, textarea {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1.5px solid #f06292;
+      font-size: 1em;
+      transition: 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color:#b71c1c;
+      outline: none;
+      box-shadow: 0 0 6px #b71c1c;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      background: #b71c1c;
+      color: white;
+      font-weight: bold;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #ff4081, #ef5350);
+    }
+
+    .emoji-label {
+      font-weight: 600;
+      font-size: 1.05em;
+      color:#b71c1c;
+      text-align: left;
+    }
+
+    .msg {
+      margin-top: 20px;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    .msg.success {
+      background-color: #e0f2f1;
+      color: #00796b;
+      border: 1.5px solid #26a69a;
+    }
+
+    .msg.error {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1.5px solid #ef5350;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Request Blood</h2>
+    <form id="requestForm">
+      <label class="emoji-label"> Blood Group</label>
+      <select id="bloodGroup" required>
+        <option value="">Select blood group</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+      </select>
+
+      <label class="emoji-label"> Hospital / Location</label>
+          <select id="location" required>
+            <option value="">Select a hospital</option>
+            <option value="Apollo Hospital, Hyderabad">Apollo Hospital, Hyderabad</option>
+            <option value="Yashoda Hospitals, Hyderabad">Yashoda Hospitals, Hyderabad</option>
+            <option value="AIIMS, Delhi">AIIMS, Delhi</option>
+            <option value="Fortis Hospital, Mumbai">Fortis Hospital, Mumbai</option>
+            <option value="Christian Medical College, Vellore">Christian Medical College, Vellore</option>
+            <option value="KIMS Hospital, Bengaluru">KIMS Hospital, Bengaluru</option>
+            <option value="PGIMER, Chandigarh">PGIMER, Chandigarh</option>
+            <option value="Narayana Health, Bengaluru">Narayana Health, Bengaluru</option>
+            <option value="Other">Other</option>
+          </select>
+
+      <label class="emoji-label">Reason / Message</label>
+      <textarea id="reason" placeholder="Brief reason for blood request..." required></textarea>
+
+      <button type="submit">Submit Blood Request</button>
+    </form>
+    <div id="message" class="msg" style="display: none;"></div>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
+    if (!user || user.role !== 'recipient') {
+      window.location.href = "login.html";
+    }
+
+    const msgBox = document.getElementById("message");
+
+    document.getElementById("requestForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const bloodGroup = document.getElementById("bloodGroup").value;
+      const location = document.getElementById("location").value;
+      const reason = document.getElementById("reason").value;
+
+      try {
+        const res = await fetch("http://localhost:5050/api/recipient/request/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ 
+            email: user.email, 
+            bloodGroup, 
+            location, 
+            reason 
+          }),
+        });
+
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Invalid JSON response from server");
+        }
+
+        const data = await res.json();
+        console.log(res);
+        msgBox.style.display = "block";
+
+        if (res.status === 200) {
+          msgBox.className = "msg success";
+          msgBox.innerHTML = `✅ ${data.message}` + 
+            (data.donorContact ? `<br>📞 Donor Contact: <strong>${data.donorContact}</strong>` : '');
+          
+        } else {
+          msgBox.className = "msg error";
+          msgBox.innerHTML = `❌ Something went wrong.`;
+        }
+
+      } catch (err) {
+        console.error(err);
+        msgBox.className = "msg error";
+        msgBox.style.display = "block";
+        msgBox.textContent = "❌ Failed to send request.";
+      }
+    });
+  </script>
+</body>
+</html>

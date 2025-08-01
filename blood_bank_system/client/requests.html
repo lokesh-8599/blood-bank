@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Requests | Admin</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: white;
+    }
+
+    header {
+      background-color: #b71c1c;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h2 {
+      color:#b71c1c;
+      margin-bottom: 20px;
+    }
+
+    #searchInput {
+      margin-bottom: 15px;
+      padding: 8px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid white;
+    }
+
+    th {
+      background-color: #fff3e0;
+      color: #e65100;
+    }
+
+    tr:hover {
+      background-color: #fff3e0;
+    }
+
+    .status {
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .Pending {
+      background-color: #fffde7;
+      color: #f9a825;
+    }
+
+    .Approved {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .Denied {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    button {
+      padding: 6px 12px;
+      margin-right: 5px;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .approve-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .deny-btn {
+      background-color: #e53935;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #ff9800;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #e65100;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: white;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Manage Blood Requests</h1>
+  </header>
+
+  <div class="container">
+    <h2>Requests List</h2>
+
+    <!-- ✅ Search Bar -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search requests..."
+      onkeyup="filterRequests()"
+    />
+
+    <table id="requestsTable">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Blood Group</th>
+          <th>Location</th>
+          <th>Reason</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Inject rows dynamically -->
+      </tbody>
+    </table>
+  </div>
+  <footer>© 2025 Blood Bank Management | Admin Panel</footer>
+
+  <script>
+    const BASE_URL = "https://blood-bank-management-system-p5yt.onrender.com";
+
+    async function fetchRequests() {
+      try {
+        const res = await fetch(`http://localhost:5050/api/admin/requests`);
+        if (!res.ok) throw new Error("Failed to fetch requests");
+
+        const data = await res.json();
+
+        const tbody = document.querySelector("#requestsTable tbody");
+        tbody.innerHTML = "";
+
+        data.forEach(request => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${request.email}</td>
+            <td>${request.bloodGroup}</td>
+            <td>${request.location}</td>
+            <td>${request.reason}</td>
+            <td>${new Date(request.date).toLocaleDateString()}</td>
+            <td><span class="status ${request.status}">${request.status}</span></td>
+            <td>
+              <button class="approve-btn" onclick="updateStatus('${request._id}', 'Approved')">Approve</button>
+              <button class="deny-btn" onclick="updateStatus('${request._id}', 'Denied')">Deny</button>
+              <button class="delete-btn" onclick="deleteRequest('${request._id}')">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error("Failed to fetch requests:", err);
+        alert("Error loading requests.");
+      }
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        const res = await fetch(`http://localhost:5050/api/admin/requests/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status })
+        });
+
+        const result = await res.json();
+        alert(result.message || "Status updated.");
+        fetchRequests(); // refresh list
+      } catch (err) {
+        console.error("Failed to update status:", err);
+        alert("Error updating request status.");
+      }
+    }
+
+    async function deleteRequest(id) {
+      if (!confirm("Are you sure you want to delete this request permanently?")) return;
+
+      try {
+        const res = await fetch(`http://localhost:5050/api/admin/requests/${id}`, {
+          method: "DELETE"
+        });
+
+        const result = await res.json();
+        alert(result.message || result.error || "Request deleted.");
+        fetchRequests(); // refresh list
+      } catch (err) {
+        console.error("Failed to delete request:", err);
+        alert("Error deleting request.");
+      }
+    }
+
+    function filterRequests() {
+      const input = document.getElementById("searchInput");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("requestsTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) { // Skip header
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+        for (let j = 0; j < cells.length - 1; j++) { // Exclude action column
+          if (cells[j].textContent.toLowerCase().includes(filter)) {
+            match = true;
+            break;
+          }
+        }
+        rows[i].style.display = match ? "" : "none";
+      }
+    }
+
+    // Load requests on page load
+    window.onload = fetchRequests;
+  </script>
+</body>
+</html>
