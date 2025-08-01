@@ -161,7 +161,7 @@
 
     async function fetchRequests() {
       try {
-        const res = await fetch(`http://localhost:5050/api/admin/requests`);
+        const res = await fetch(`https://blood-bank-wym2.onrender.com/api/admin/requests`);
         if (!res.ok) throw new Error("Failed to fetch requests");
 
         const data = await res.json();
