@@ -111,7 +111,7 @@
       <button type="submit">Donate</button>
       <div id="message"></div>
     </form>
-    <footer>© 2025 Blood Bank | Venkata Narayana Mogili</footer>
+    <footer>© 2025 Blood Bank | Pinapaka Lokesh</footer>
   </div>
 
   <script>
@@ -140,7 +140,7 @@
       const units = document.getElementById("units").value;
 
       try {
-        const res = await fetch("http://localhost:5050/api/donate", {
+        const res = await fetch("https://blood-bank-wym2.onrender.com", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
