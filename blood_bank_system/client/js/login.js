@@ -5,7 +5,7 @@ async function adminLogin() {
   const msg = document.getElementById("msg");
 
   try {
-    const res = await fetch("http://localhost:5050/api/admin/login", {
+    const res = await fetch("https://blood-bank-wym2.onrender.com/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
